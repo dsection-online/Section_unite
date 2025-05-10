@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Homework</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background-color: #121212;
+      color: white;
+      padding: 20px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .topbar button {
+      background-color: #1f1f1f;
+      border: none;
+      padding: 10px 20px;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+
+    .topbar button:hover {
+      background-color: #333;
+    }
+
+    .subject {
+      margin-bottom: 30px;
+    }
+
+    .subject h2 {
+      color: #00aaff;
+      margin-bottom: 10px;
+    }
+
+    .subject-content {
+      background-color: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .subject-content img {
+      max-width: 100%;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <button onclick="loadSection('A')">A-Section</button>
+    <button onclick="loadSection('B')">B-Section</button>
+    <button onclick="loadSection('C')">C-Section</button>
+    <button onclick="loadSection('D')">D-Section</button>
+    <button onclick="loadSection('E')">E-Section</button>
+  </div>
+
+  <div id="homework">
+    <!-- Subjects -->
+    <div class="subject" id="Telugu">
+      <h2>Telugu</h2>
+      <div class="subject-content" id="Telugu-content">Loading...</div>
+    </div>
+    <div class="subject" id="English">
+      <h2>English</h2>
+      <div class="subject-content" id="English-content">Loading...</div>
+    </div>
+    <div class="subject" id="Science">
+      <h2>Science</h2>
+      <div class="subject-content" id="Science-content">Loading...</div>
+    </div>
+    <div class="subject" id="Social">
+      <h2>Social</h2>
+      <div class="subject-content" id="Social-content">Loading...</div>
+    </div>
+    <div class="subject" id="Maths">
+      <h2>Maths</h2>
+      <div class="subject-content" id="Maths-content">Loading...</div>
+    </div>
+    <div class="subject" id="Hindi">
+      <h2>Hindi</h2>
+      <div class="subject-content" id="Hindi-content">Loading...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1rUAnHccVVinN5bL812PKPiycFJGTmxE",
+      authDomain: "godzilla-286a4.firebaseapp.com",
+      projectId: "godzilla-286a4",
+      storageBucket: "godzilla-286a4.appspot.com",
+      messagingSenderId: "467311590292",
+      appId: "1:467311590292:web:9c6a37f585357de8db6d81"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadSection(section) {
+      const docRef = doc(db, "homework", section);
+      const docSnap = await getDoc(docRef);
+
+      const subjects = ["Telugu", "English", "Science", "Social", "Maths", "Hindi"];
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+
+        subjects.forEach(subject => {
+          const container = document.getElementById(`${subject}-content`);
+          const subjectData = data[subject.toLowerCase()] || {};
+          container.innerHTML = `
+            <p>${subjectData.text || "No homework given."}</p>
+            ${subjectData.image ? `<img src="${subjectData.image}" alt="${subject} image">` : ""}
+          `;
+        });
+      } else {
+        subjects.forEach(subject => {
+          document.getElementById(`${subject}-content`).innerHTML = "<p>No data for this section.</p>";
+        });
+      }
+    }
+
+    // Load default section on page load
+    loadSection("A");
+  </script>
+</body>
+</html>

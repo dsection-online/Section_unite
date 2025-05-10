@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload Homework</title>
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label, select, textarea, input {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+
+    .subject-block {
+      margin-bottom: 20px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+
+    button {
+      background-color: #00aaff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #0077cc;
+    }
+  </style>
+</head>
+<body>
+  <h1>Upload Homework</h1>
+  <label for="section">Select Section:</label>
+  <select id="section">
+    <option value="A">A-section</option>
+    <option value="B">B-section</option>
+    <option value="C">C-section</option>
+    <option value="D">D-section</option>
+    <option value="E">E-section</option>
+  </select>
+
+  <div id="subjects">
+    <!-- Subjects and input fields -->
+    <div class="subject-block">
+      <label>Telugu Text</label>
+      <textarea id="teluguText"></textarea>
+      <label>Telugu Image URL</label>
+      <input type="text" id="teluguImg">
+    </div>
+
+    <div class="subject-block">
+      <label>English Text</label>
+      <textarea id="englishText"></textarea>
+      <label>English Image URL</label>
+      <input type="text" id="englishImg">
+    </div>
+
+    <div class="subject-block">
+      <label>Science Text</label>
+      <textarea id="scienceText"></textarea>
+      <label>Science Image URL</label>
+      <input type="text" id="scienceImg">
+    </div>
+
+    <div class="subject-block">
+      <label>Social Text</label>
+      <textarea id="socialText"></textarea>
+      <label>Social Image URL</label>
+      <input type="text" id="socialImg">
+    </div>
+
+    <div class="subject-block">
+      <label>Maths Text</label>
+      <textarea id="mathsText"></textarea>
+      <label>Maths Image URL</label>
+      <input type="text" id="mathsImg">
+    </div>
+
+    <div class="subject-block">
+      <label>Hindi Text</label>
+      <textarea id="hindiText"></textarea>
+      <label>Hindi Image URL</label>
+      <input type="text" id="hindiImg">
+    </div>
+  </div>
+
+  <button onclick="uploadHomework()">Upload Homework</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1rUAnHccVVinN5bL812PKPiycFJGTmxE",
+      authDomain: "godzilla-286a4.firebaseapp.com",
+      projectId: "godzilla-286a4",
+      storageBucket: "godzilla-286a4.appspot.com",
+      messagingSenderId: "467311590292",
+      appId: "1:467311590292:web:9c6a37f585357de8db6d81"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function uploadHomework() {
+      const section = document.getElementById("section").value;
+
+      const homeworkData = {
+        telugu: {
+          text: document.getElementById("teluguText").value,
+          img: document.getElementById("teluguImg").value
+        },
+        english: {
+          text: document.getElementById("englishText").value,
+          img: document.getElementById("englishImg").value
+        },
+        science: {
+          text: document.getElementById("scienceText").value,
+          img: document.getElementById("scienceImg").value
+        },
+        social: {
+          text: document.getElementById("socialText").value,
+          img: document.getElementById("socialImg").value
+        },
+        maths: {
+          text: document.getElementById("mathsText").value,
+          img: document.getElementById("mathsImg").value
+        },
+        hindi: {
+          text: document.getElementById("hindiText").value,
+          img: document.getElementById("hindiImg").value
+        }
+      };
+
+      try {
+        await setDoc(doc(db, "homework", section), homeworkData);
+        alert("Homework uploaded successfully for Section " + section);
+      } catch (e) {
+        console.error("Error uploading:", e);
+        alert("Upload failed. Check console for error.");
+      }
+    }
+  </script>
+</body>
+</html>

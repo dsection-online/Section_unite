@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Section Unite - Sign In</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1477201389074-1863f668fac9?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-box {
+      background: rgba(0, 0, 0, 0.7);
+      padding: 40px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      color: white;
+      position: relative;
+    }
+
+    .login-box h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: white;
+      text-shadow: 2px 2px black;
+    }
+
+    .login-box h1 span {
+      color: #00aaff;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #00aaff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #0077cc;
+    }
+
+    #soundIcon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+      width: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <img id="soundIcon" src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/volume-on-icon.png" alt="Sound">
+    <h1><span>Section</span> Unite</h1>
+    <input type="text" id="username" placeholder="Enter username">
+    <input type="password" id="password" placeholder="Enter password">
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1rUAnHccVVinN5bL812PKPiycFJGTmxE",
+      authDomain: "godzilla-286a4.firebaseapp.com",
+      projectId: "godzilla-286a4",
+      storageBucket: "godzilla-286a4.appspot.com",
+      messagingSenderId: "467311590292",
+      appId: "1:467311590292:web:9c6a37f585357de8db6d81"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    document.getElementById("nextBtn").addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if (!username || !password) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      try {
+        const result = await signInAnonymously(auth);
+        const user = result.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+          username,
+          password,
+          createdAt: new Date()
+        });
+
+        window.location.href = "profile.html";
+      } catch (error) {
+        console.error("Auth error:", error);
+        alert("Error signing in.");
+      }
+    });
+
+    const sounds = [
+      "https://www.myinstants.com/media/sounds/r2d2.mp3",
+      "https://www.myinstants.com/media/sounds/tuturu.mp3"
+    ];
+
+    document.getElementById("soundIcon").addEventListener("click", () => {
+      const sound = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
+      sound.play();
+    });
+  </script>
+</body>
+</html>

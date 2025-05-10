@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Set Up Profile</title>
+  <style>
+    body {
+      background: url('https://images.unsplash.com/photo-1446776811953-b23d57bd21aa') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 60px;
+    }
+
+    .container {
+      background-color: rgba(0, 0, 0, 0.8);
+      padding: 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: none;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background-color: #00aaff;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #008ecc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Create Your Profile</h2>
+    <input type="text" id="displayName" placeholder="Your Display Name" />
+    <textarea id="bio" placeholder="Short Bio"></textarea>
+    <input type="file" id="profileImage" accept="image/*" />
+    <button id="nextBtn">Next</button>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1rUAnHccVVinN5bL812PKPiycFJGTmxE",
+      authDomain: "godzilla-286a4.firebaseapp.com",
+      projectId: "godzilla-286a4",
+      storageBucket: "godzilla-286a4.appspot.com",
+      messagingSenderId: "467311590292",
+      appId: "1:467311590292:web:9c6a37f585357de8db6d81"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const nextBtn = document.getElementById("nextBtn");
+        nextBtn.addEventListener("click", async () => {
+          const displayName = document.getElementById("displayName").value.trim();
+          const bio = document.getElementById("bio").value.trim();
+          const imageInput = document.getElementById("profileImage");
+          const imageFile = imageInput.files[0];
+
+          if (!displayName || !bio || !imageFile) {
+            alert("Please fill all fields and select a profile image.");
+            return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = async function () {
+            const imageData = reader.result;
+
+            try {
+              await setDoc(doc(db, "users", user.uid), {
+                displayName: displayName,
+                bio: bio,
+                profileImage: imageData
+              });
+              window.location.href = "dashboard.html";
+            } catch (error) {
+              console.error("Error saving profile:", error);
+              alert("Failed to save profile. Check console for details.");
+            }
+          };
+
+          reader.readAsDataURL(imageFile);
+        });
+      } else {
+        window.location.href = "index.html";
+      }
+    });
+  </script>
+</body>
+</html>
